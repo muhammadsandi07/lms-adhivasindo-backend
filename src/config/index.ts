@@ -6,6 +6,7 @@ const config = {
   PORT: process.env.PORT || 3000,
   NODE_ENV: process.env.NODE_ENV,
   WHITELIST_ORIGINS: ["https://"],
+  DB_URL: process.env.DATABASE_URL,
 }
 
 export default config
