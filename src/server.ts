@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-
+import contentsRoutes from "@/routes/contents.routes"
 import config from "@/config"
 
 const app = express()
@@ -21,9 +21,12 @@ const corsOptions: CorsOptions = {
   },
 }
 app.use(cors(corsOptions))
+app.use(express.json())
 app.get("/", (req, res) => {
   res.json({ message: "Hello world" })
 })
+
+app.use("/api/contents", contentsRoutes)
 app.listen(config.PORT, () => {
   console.log(`server running: http://localhost:${config.PORT}`)
 })
