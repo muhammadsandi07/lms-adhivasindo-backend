@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import authRoutes from "@/routes/auth.routes"
 import contentsRoutes from "@/routes/contents.routes"
 import config from "@/config"
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello world" })
 })
 
+app.use("/api/auth", authRoutes)
 app.use("/api/contents", contentsRoutes)
 app.listen(config.PORT, () => {
   console.log(`server running: http://localhost:${config.PORT}`)
