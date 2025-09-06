@@ -1,49 +1,54 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
-}
-
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // atau "mysql" sesuai DB kamu
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 model User {
-  id            Int            @id @default(autoincrement())
-  name          String
-  email         String         @unique
-  passwordHash  String
-  image         String?        // foto profil user
-  contents      Content[]      @relation("AuthorContents")
-  pemateri      Content[]      @relation("PemateriContents")
-  refreshTokens RefreshToken[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id        String         @id @default(uuid())
+  name      String
+  email     String         @unique
+  password  String
+  image     String?
+  tokens    RefreshToken[]
+  role      String         @default("student")
+  contents  Content[]      @relation("UserContents")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  contents    Content[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Content {
-  id         Int      @id @default(autoincrement())
+  id         String  @id @default(uuid())
   title      String
   body       String
-  author     User?    @relation("AuthorContents", fields: [authorId], references: [id])
-  authorId   Int?
-  pemateri   User?    @relation("PemateriContents", fields: [pemateriId], references: [id])
-  pemateriId Int?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  thumbnail  String?
+  categoryId String
+  pemateriId String
+
+  category Category @relation(fields: [categoryId], references: [id])
+  pemateri User     @relation("UserContents", fields: [pemateriId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model RefreshToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   token     String   @unique
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int
   expiresAt DateTime
   createdAt DateTime @default(now())
 }

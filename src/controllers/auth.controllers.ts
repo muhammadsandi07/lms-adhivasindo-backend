@@ -19,7 +19,7 @@ export async function register(req: Request, res: Response) {
     Number(process.env.BCRYPT_SALT_ROUNDS) || 10
   )
   const user = await prisma.user.create({
-    data: { name, email, passwordHash, image },
+    data: { name, email, password, image },
   })
 
   res.status(201).json({
@@ -36,7 +36,7 @@ export async function login(req: Request, res: Response) {
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) return res.status(401).json({ message: "Invalid credentials" })
 
-  const valid = await bcrypt.compare(password, user.passwordHash)
+  const valid = await bcrypt.compare(password, user.password)
   if (!valid) return res.status(401).json({ message: "Invalid credentials" })
 
   const accessToken = generateAccessToken({ id: user.id, email: user.email })
